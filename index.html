@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>HyperStack</title>
+        <link
+            rel="icon"
+            type="image/png"
+            href="./favicon/favicon-96x96.png"
+            sizes="96x96"
+        />
+        <link rel="icon" type="image/svg+xml" href="./favicon/favicon.svg" />
+        <link rel="shortcut icon" href="./favicon/favicon.ico" />
+        <link
+            rel="apple-touch-icon"
+            sizes="180x180"
+            href="./favicon/apple-touch-icon.png"
+        />
+        <link rel="manifest" href="./favicon/site.webmanifest" />
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/cannon.js/0.6.2/cannon.min.js"
+            integrity="sha512-avLcnGxl5mqAX/wIKERdb1gFNkOLHh2W5JNCfJm5OugpEPBz7LNXJJ3BDjjwO00AxEY1MqdNjtEmiYhKC0ld7g=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
+        ></script>
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/three.js/101/three.min.js"
+            integrity="sha512-MzluaiqTHieej9sKOtlT5D5uog5n278iCAX/sr8Ms271OkiKptg1RZgRXRjhQ+v4yO3LcffdeeQfiUfMpduqeA=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
+        ></script>
+        <link rel="stylesheet" href="./styles.css" />
+        <script src="./script.js" defer></script>
+    </head>
+    <body>
+        <div id="instructions">
+            <div class="content">
+                <p>Stack the blocks on top of each other</p>
+                <p>
+                    Click, tap or press Space when a block is above the stack.
+                    Can you reach the blue color blocks?
+                </p>
+                <p>Click, tap or press Space to start game</p>
+            </div>
+        </div>
+        <div id="results">
+            <div class="content">
+                <p>You missed the block</p>
+                <p>To reset the game press R</p>
+            </div>
+        </div>
+        <div id="score">0</div>
+    </body>
+</html>
