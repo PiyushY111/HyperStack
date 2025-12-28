@@ -14,7 +14,7 @@ let currentUser = null; // Current logged in user
 let currentScore = 0; // Current game score
 
 // API Configuration
-const API_URL = 'http://localhost:5001/api';
+const API_URL = 'https://hyperstack.onrender.com/api';
 
 const scoreElement = document.getElementById("score");
 const instructionsElement = document.getElementById("instructions");
