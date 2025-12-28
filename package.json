@@ -1,0 +1,14 @@
+{
+  "name": "hyperstack",
+  "version": "1.0.0",
+  "description": "Full-stack 3D block stacking game",
+  "scripts": {
+    "install-server": "cd server && npm install",
+    "server": "cd server && npm start",
+    "server:dev": "cd server && npm run dev",
+    "start": "./start.sh"
+  },
+  "keywords": ["game", "3d", "fullstack", "mongodb"],
+  "author": "",
+  "license": "MIT"
+}

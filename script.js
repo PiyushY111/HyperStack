@@ -10,12 +10,233 @@ const originalBoxSize = 3; // Original width and height of a box
 let autopilot;
 let gameEnded;
 let robotPrecision; // Determines how precise the game is on autopilot
+let currentUser = null; // Current logged in user
+let currentScore = 0; // Current game score
+
+// API Configuration
+const API_URL = 'http://localhost:5001/api';
 
 const scoreElement = document.getElementById("score");
 const instructionsElement = document.getElementById("instructions");
 const resultsElement = document.getElementById("results");
 
-init();
+// Authentication & Leaderboard Elements
+const loginModal = document.getElementById("loginModal");
+const leaderboardModal = document.getElementById("leaderboardModal");
+const usernameInput = document.getElementById("usernameInput");
+const loginBtn = document.getElementById("loginBtn");
+const loginError = document.getElementById("loginError");
+const gameUI = document.getElementById("gameUI");
+const currentUserSpan = document.getElementById("currentUser");
+const logoutBtn = document.getElementById("logoutBtn");
+const leaderboardBtn = document.getElementById("leaderboardBtn");
+const closeLeaderboard = document.getElementById("closeLeaderboard");
+const saveScoreBtn = document.getElementById("saveScoreBtn");
+const viewLeaderboardBtn = document.getElementById("viewLeaderboardBtn");
+const finalScoreElement = document.getElementById("finalScore");
+
+// Check if user is already logged in
+checkAuth();
+
+function checkAuth() {
+    const savedUser = localStorage.getItem("hyperstack_user");
+    if (savedUser) {
+        currentUser = savedUser;
+        showGame();
+    } else {
+        showLoginModal();
+    }
+}
+
+function showLoginModal() {
+    loginModal.style.display = "flex";
+    gameUI.style.display = "none";
+}
+
+function showGame() {
+    loginModal.style.display = "none";
+    gameUI.style.display = "block";
+    currentUserSpan.textContent = `Player: ${currentUser}`;
+    init();
+}
+
+async function login() {
+    const username = usernameInput.value.trim();
+    if (username.length < 3) {
+        loginError.textContent = "Username must be at least 3 characters";
+        return;
+    }
+    if (username.length > 20) {
+        loginError.textContent = "Username must be less than 20 characters";
+        return;
+    }
+    
+    try {
+        loginBtn.textContent = "Logging in...";
+        loginBtn.disabled = true;
+        
+        const response = await fetch(`${API_URL}/auth/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            currentUser = username;
+            localStorage.setItem("hyperstack_user", username);
+            loginError.textContent = "";
+            showGame();
+        } else {
+            loginError.textContent = data.message || "Login failed";
+        }
+    } catch (error) {
+        console.error('Login error:', error);
+        loginError.textContent = "Server error. Please try again.";
+    } finally {
+        loginBtn.textContent = "Start Playing";
+        loginBtn.disabled = false;
+    }
+}
+
+function logout() {
+    currentUser = null;
+    localStorage.removeItem("hyperstack_user");
+    showLoginModal();
+    
+    // Clean up game
+    if (renderer && renderer.domElement) {
+        renderer.domElement.remove();
+    }
+}
+
+async function autoSaveScore() {
+    if (!currentUser || currentScore === 0) return;
+    
+    try {
+        if (saveScoreBtn) {
+            saveScoreBtn.textContent = "Saving score...";
+            saveScoreBtn.disabled = true;
+        }
+        
+        const response = await fetch(`${API_URL}/leaderboard/save`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: currentUser,
+                score: currentScore
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            console.log('Score auto-saved successfully:', currentScore);
+            if (saveScoreBtn) {
+                saveScoreBtn.textContent = "Score Saved! ✓";
+                saveScoreBtn.style.background = "linear-gradient(135deg, #4CAF50, #45a049)";
+                saveScoreBtn.style.color = "white";
+            }
+            // Show the view leaderboard button
+            if (viewLeaderboardBtn) {
+                viewLeaderboardBtn.style.display = "block";
+            }
+        } else {
+            console.error('Auto-save failed:', data.message);
+            if (saveScoreBtn) {
+                saveScoreBtn.textContent = "Save Score";
+                saveScoreBtn.disabled = false;
+            }
+        }
+    } catch (error) {
+        console.error('Auto-save score error:', error);
+        if (saveScoreBtn) {
+            saveScoreBtn.textContent = "Save Score";
+            saveScoreBtn.disabled = false;
+        }
+    }
+}
+
+async function saveScore() {
+    // This function is no longer needed as auto-save handles everything
+    // Just show the leaderboard when the button is clicked
+    showLeaderboard();
+}
+
+async function showLeaderboard() {
+    try {
+        const response = await fetch(`${API_URL}/leaderboard/global/10`);
+        const data = await response.json();
+        
+        const leaderboardList = document.getElementById("leaderboardList");
+        
+        if (!data.success || data.leaderboard.length === 0) {
+            leaderboardList.innerHTML = '<p style="text-align: center; padding: 20px;">No scores yet. Be the first!</p>';
+        } else {
+            leaderboardList.innerHTML = data.leaderboard.map((entry, index) => {
+                const rank = index + 1;
+                let rankClass = "";
+                let medal = "";
+                if (rank === 1) {
+                    rankClass = "gold";
+                    medal = "🥇";
+                } else if (rank === 2) {
+                    rankClass = "silver";
+                    medal = "🥈";
+                } else if (rank === 3) {
+                    rankClass = "bronze";
+                    medal = "🥉";
+                }
+                
+                const isCurrentUser = entry.username === currentUser;
+                
+                return `
+                    <div class="leaderboard-item ${isCurrentUser ? 'current-user' : ''}">
+                        <span class="leaderboard-rank ${rankClass}">${medal ? medal : '#' + rank}</span>
+                        <span class="leaderboard-name">${entry.username}</span>
+                        <span class="leaderboard-score">${entry.score} pts</span>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        leaderboardModal.style.display = "flex";
+    } catch (error) {
+        console.error('Leaderboard error:', error);
+        const leaderboardList = document.getElementById("leaderboardList");
+        leaderboardList.innerHTML = '<p style="text-align: center; padding: 20px; color: #ffcccc;">Error loading leaderboard. Please try again.</p>';
+        leaderboardModal.style.display = "flex";
+    }
+}
+
+function hideLeaderboard() {
+    leaderboardModal.style.display = "none";
+}
+
+// Event Listeners for Authentication & Leaderboard
+loginBtn.addEventListener("click", login);
+usernameInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") login();
+});
+logoutBtn.addEventListener("click", logout);
+leaderboardBtn.addEventListener("click", showLeaderboard);
+closeLeaderboard.addEventListener("click", hideLeaderboard);
+saveScoreBtn.addEventListener("click", showLeaderboard);
+if (viewLeaderboardBtn) {
+    viewLeaderboardBtn.addEventListener("click", showLeaderboard);
+}
+
+// Close modals when clicking outside
+leaderboardModal.addEventListener("click", (e) => {
+    if (e.target === leaderboardModal) hideLeaderboard();
+});
+
+// Don't call init() here - it will be called by showGame() after login
 
 // Determines how precise the game is on autopilot
 function setRobotPrecision() {
@@ -23,12 +244,23 @@ function setRobotPrecision() {
 }
 
 function init() {
+    // Only initialize if user is logged in
+    if (!currentUser) return;
+    
     autopilot = true;
     gameEnded = false;
     lastTime = 0;
     stack = [];
     overhangs = [];
     setRobotPrecision();
+    
+    // Reset save button state
+    if (saveScoreBtn) {
+        saveScoreBtn.textContent = "Saving score...";
+        saveScoreBtn.disabled = true;
+        saveScoreBtn.style.background = "";
+        saveScoreBtn.style.color = "";
+    }
 
     // Initialize CannonJS
     world = new CANNON.World();
@@ -90,10 +322,17 @@ function startGame() {
     lastTime = 0;
     stack = [];
     overhangs = [];
+    currentScore = 0;
 
     if (instructionsElement) instructionsElement.style.display = "none";
     if (resultsElement) resultsElement.style.display = "none";
     if (scoreElement) scoreElement.innerText = 0;
+    
+    // Reset save score button
+    if (saveScoreBtn) {
+        saveScoreBtn.textContent = "Save Score";
+        saveScoreBtn.disabled = false;
+    }
 
     if (world) {
         // Remove every object from world
@@ -250,7 +489,8 @@ function splitBlockAndAddNextOneIfOverlaps() {
         const newDepth = topLayer.depth; // New layer has the same size as the cut top layer
         const nextDirection = direction == "x" ? "z" : "x";
 
-        if (scoreElement) scoreElement.innerText = stack.length - 1;
+        currentScore = stack.length - 1;
+        if (scoreElement) scoreElement.innerText = currentScore;
         addLayer(nextX, nextZ, newWidth, newDepth, nextDirection);
     } else {
         missedTheSpot();
@@ -271,6 +511,17 @@ function missedTheSpot() {
     scene.remove(topLayer.threejs);
 
     gameEnded = true;
+    
+    // Update final score display
+    if (finalScoreElement) {
+        finalScoreElement.textContent = `Score: ${currentScore}`;
+    }
+    
+    // Auto-save score
+    if (currentUser && currentScore > 0 && !autopilot) {
+        autoSaveScore();
+    }
+    
     if (resultsElement && !autopilot) resultsElement.style.display = "flex";
 }
 

@@ -34,6 +34,42 @@
         <script src="./script.js" defer></script>
     </head>
     <body>
+        <!-- Login Modal -->
+        <div id="loginModal" class="modal">
+            <div class="modal-content">
+                <h2>Welcome to HyperStack</h2>
+                <p>Enter your username to play</p>
+                <input type="text" id="usernameInput" placeholder="Username" maxlength="20" />
+                <button id="loginBtn">Start Playing</button>
+                <p class="error-msg" id="loginError"></p>
+            </div>
+        </div>
+
+        <!-- Leaderboard Modal -->
+        <div id="leaderboardModal" class="modal" style="display: none;">
+            <div class="modal-content leaderboard-modal">
+                <div class="modal-header">
+                    <h2>🏆 Global Leaderboard</h2>
+                    <button class="close-btn" id="closeLeaderboard">&times;</button>
+                </div>
+                <div class="leaderboard-header-row">
+                    <span>Rank</span>
+                    <span>Player</span>
+                    <span>Best Score</span>
+                </div>
+                <div id="leaderboardList"></div>
+            </div>
+        </div>
+
+        <!-- Game UI -->
+        <div id="gameUI" style="display: none;">
+            <div id="userInfo">
+                <span id="currentUser"></span>
+                <button id="logoutBtn">Logout</button>
+            </div>
+            <button id="leaderboardBtn">🏆 Leaderboard</button>
+        </div>
+
         <div id="instructions">
             <div class="content">
                 <p>Stack the blocks on top of each other</p>
@@ -47,6 +83,9 @@
         <div id="results">
             <div class="content">
                 <p>You missed the block</p>
+                <p id="finalScore">Score: 0</p>
+                <button id="saveScoreBtn">Saving score...</button>
+                <button id="viewLeaderboardBtn">View Leaderboard</button>
                 <p>To reset the game press R</p>
             </div>
         </div>

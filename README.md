@@ -1,4 +1,4 @@
-# HyperStack
+# HyperStack - Full Stack Game
 
 ## Introduction
 
@@ -10,19 +10,17 @@ HyperStack is a fun and addictive arcade-style game where players must carefully
 -   Increasing difficulty as the tower grows taller
 -   Smooth animations and responsive controls
 -   Score tracking to challenge yourself and others
+-   🔐 **User authentication with MongoDB**
+-   🏆 **Persistent leaderboard system**
+-   📊 **Real-time score tracking**
+-   👥 **Top 10 players display**
+-   ⭐ **Personal best tracking**
 
 ## How to Play
 
-1. Press or tap to drop the moving block.
-2. Try to align it perfectly with the previous block.
-3. If misaligned, the block gets trimmed, making it harder.
-4. Keep stacking until no more blocks can fit.
-5. Aim for the highest score and challenge your friends!
-
-
-## Technologies Used
-
--   HTML, CSS, JavaScript
--   Three.js for 3D rendering
--   Cannon.js for physics simulation
-
+1. Enter your username to start playing
+2. Press or tap to drop the moving block.
+3. Try to align it perfectly with the previous block.
+4. If misaligned, the block gets trimmed, making it harder.
+5. Keep stacking until no more blocks can fit.
+6. Save your score and compete on the leaderboard!
