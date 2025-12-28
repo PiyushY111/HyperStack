@@ -378,8 +378,9 @@ function addOverhang(x, z, width, depth) {
 function generateBox(x, y, z, width, depth, falls) {
     // ThreeJS
     const geometry = new THREE.BoxGeometry(width, boxHeight, depth);
-    // Alternate between white and grey as blocks move upward
-    const color = stack.length % 2 === 0 ? 0xffffff : 0x808080;
+    // Create rainbow colors based on stack height
+    const hue = (stack.length * 36) % 360; // Cycle through hue values (0-360)
+    const color = new THREE.Color().setHSL(hue / 360, 0.8, 0.6);
     const material = new THREE.MeshLambertMaterial({ color });
     const mesh = new THREE.Mesh(geometry, material);
     mesh.position.set(x, y, z);
