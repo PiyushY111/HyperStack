@@ -234,13 +234,29 @@ if (viewLeaderboardBtn) {
 // Mobile Start Button
 const mobileStartBtn = document.getElementById("mobileStartBtn");
 if (mobileStartBtn) {
-    mobileStartBtn.addEventListener("click", eventHandler);
+    mobileStartBtn.addEventListener("pointerdown", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!isProcessingInput) {
+            isProcessingInput = true;
+            setTimeout(() => { isProcessingInput = false; }, 100);
+            eventHandler();
+        }
+    });
 }
 
 // Mobile Restart Button
 const mobileRestartBtn = document.getElementById("mobileRestartBtn");
 if (mobileRestartBtn) {
-    mobileRestartBtn.addEventListener("click", startGame);
+    mobileRestartBtn.addEventListener("pointerdown", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!isProcessingInput) {
+            isProcessingInput = true;
+            setTimeout(() => { isProcessingInput = false; }, 100);
+            startGame();
+        }
+    });
 }
 
 // Close modals when clicking outside
@@ -390,9 +406,7 @@ function addOverhang(x, z, width, depth) {
 function generateBox(x, y, z, width, depth, falls) {
     // ThreeJS
     const geometry = new THREE.BoxGeometry(width, boxHeight, depth);
-    // Create rainbow colors based on stack height
-    const hue = (stack.length * 36) % 360; // Cycle through hue values (0-360)
-    const color = new THREE.Color().setHSL(hue / 360, 0.8, 0.6);
+    const color = new THREE.Color(`hsl(${30 + stack.length * 4}, 100%, 50%)`);
     const material = new THREE.MeshLambertMaterial({ color });
     const mesh = new THREE.Mesh(geometry, material);
     mesh.position.set(x, y, z);
@@ -441,8 +455,30 @@ function cutBox(topLayer, overlap, size, delta) {
     topLayer.cannonjs.addShape(shape);
 }
 
-window.addEventListener("mousedown", eventHandler);
-window.addEventListener("touchstart", eventHandler);
+// Unified input handling using pointer events to avoid double-firing
+let isProcessingInput = false;
+
+function handleGameInput(e) {
+    // Don't trigger game action if touching UI elements
+    const target = e.target;
+    if (target.tagName === 'BUTTON' || 
+        target.tagName === 'INPUT' || 
+        target.closest('.modal-content') ||
+        target.closest('#gameUI')) {
+        return;
+    }
+    
+    // Prevent double-firing from touch + mouse events
+    if (isProcessingInput) return;
+    isProcessingInput = true;
+    setTimeout(() => { isProcessingInput = false; }, 100);
+    
+    eventHandler();
+}
+
+// Use pointer events for unified input handling (works for mouse, touch, and pen)
+window.addEventListener("pointerdown", handleGameInput);
+
 window.addEventListener("keydown", function (event) {
     if (event.key == " ") {
         event.preventDefault();
