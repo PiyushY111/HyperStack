@@ -231,6 +231,18 @@ if (viewLeaderboardBtn) {
     viewLeaderboardBtn.addEventListener("click", showLeaderboard);
 }
 
+// Mobile Start Button
+const mobileStartBtn = document.getElementById("mobileStartBtn");
+if (mobileStartBtn) {
+    mobileStartBtn.addEventListener("click", eventHandler);
+}
+
+// Mobile Restart Button
+const mobileRestartBtn = document.getElementById("mobileRestartBtn");
+if (mobileRestartBtn) {
+    mobileRestartBtn.addEventListener("click", startGame);
+}
+
 // Close modals when clicking outside
 leaderboardModal.addEventListener("click", (e) => {
     if (e.target === leaderboardModal) hideLeaderboard();

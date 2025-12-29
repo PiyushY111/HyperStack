@@ -299,6 +299,55 @@ a:visited {
     right: 30px;
 }
 
+/* Mobile Start Button */
+.mobile-start-btn {
+    display: none;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: 3px solid white;
+    padding: 15px 40px;
+    font-size: 1.2em;
+    font-weight: bold;
+    border-radius: 50px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: all 0.3s;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+}
+
+.mobile-start-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+
+.mobile-start-btn:active {
+    transform: translateY(-1px);
+}
+
+.mobile-restart-btn {
+    display: none;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: 3px solid white;
+    padding: 15px 40px;
+    font-size: 1.2em;
+    font-weight: bold;
+    border-radius: 50px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: all 0.3s;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+}
+
+.mobile-restart-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+
+.mobile-restart-btn:active {
+    transform: translateY(-1px);
+}
+
 /* Mobile Responsive Styles */
 @media (max-width: 768px) {
     .modal-content {
@@ -410,6 +459,15 @@ a:visited {
         max-width: 90%;
         padding: 30px 20px;
         font-size: 0.9em;
+    }
+
+    /* Show mobile start button on mobile devices */
+    .mobile-start-btn {
+        display: inline-block;
+    }
+
+    .mobile-restart-btn {
+        display: inline-block;
     }
 
     #finalScore {
