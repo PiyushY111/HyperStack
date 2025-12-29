@@ -10,11 +10,11 @@ HyperStack is a fun and addictive arcade-style game where players must carefully
 -   Increasing difficulty as the tower grows taller
 -   Smooth animations and responsive controls
 -   Score tracking to challenge yourself and others
--   🔐 **User authentication with MongoDB**
--   🏆 **Persistent leaderboard system**
--   📊 **Real-time score tracking**
--   👥 **Top 10 players display**
--   ⭐ **Personal best tracking**
+-   User authentication with MongoDB
+-   Persistent leaderboard system
+-   Real-time score tracking
+-   Top 10 players display
+-   Personal best tracking
 
 ## How to Play
 
